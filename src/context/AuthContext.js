@@ -1,6 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
+export const fetchProducts = async () => {
+  const { data } = await axios.get("http://localhost:5000/api/products");
+  return data;
+};
+
+
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
