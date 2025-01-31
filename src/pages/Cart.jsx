@@ -52,9 +52,15 @@
 import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
 import React from "react";
+import axios from "axios";
 
 const Cart = () => {
   const { cart, removeFromCart, clearCart } = useCart();
+
+  const handleCheckout = async () => {
+    const { data } = await axios.post("http://localhost:5000/api/payment/create-checkout-session", { cart });
+    window.location.href = data.url;
+  };
 
   return (
     <div className="container mx-auto p-8">
@@ -87,6 +93,9 @@ const Cart = () => {
               </li>
             ))}
           </ul>
+          <button onClick={handleCheckout} className="mt-4 bg-green-500 text-white px-4 py-2 rounded">
+            Checkout
+          </button>
           <button onClick={clearCart} className="mt-4 bg-gray-500 text-white px-4 py-2 rounded">
             Clear Cart
           </button>
