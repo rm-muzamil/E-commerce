@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 
 const ProductDetails = () => {
-    const { id } = useParams(); // Get product ID from URL
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const { addToCart } = useCart();
+  const { id } = useParams(); // Get product ID from URL
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Fetch product details by ID
@@ -32,6 +34,14 @@ const ProductDetails = () => {
     return <p className="text-center text-red-500">Product not found.</p>;
   }
 
+
+  const addToWishlist = async () => {
+    await axios.post("http://localhost:5000/api/user/wishlist", { productId: product._id }, {
+      headers: { Authorization: `Bearer ${user.token}` },
+    });
+    alert("Added to wishlist!");
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-8">
@@ -45,11 +55,11 @@ const ProductDetails = () => {
           <p className="text-gray-600 mb-4">{product.description}</p>
           <p className="font-bold text-xl text-gray-800 mb-4">${product.price}</p>
           <button
-  onClick={() => addToCart(product)}
-  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
->
-  Add to Cart
-</button>;
+            onClick={() => addToCart(product)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+          >
+            Add to Cart
+          </button>;
           <div className="mt-4">
             <Link to="/" className="text-blue-600 hover:underline">
               &larr; Back to Products
@@ -57,7 +67,14 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-      
+      <div>
+        <h1>{product.name}</h1>
+        <p>${product.price}</p>
+        <button onClick={addToWishlist} className="bg-yellow-500 text-white px-4 py-2 rounded">
+          Add to Wishlist
+        </button>
+      </div>
+
     </div>
   );
 };

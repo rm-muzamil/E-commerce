@@ -1,9 +1,39 @@
 const express = require("express");
-const User = require("../models/User");
+const User = require("../models/Usere");
 const bcrypt = require("bcryptjs");
 const { authenticate } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
+// Get wishlist
+router.get("/wishlist", authenticate, async (req, res) => {
+  const user = await User.findById(req.user.id).populate("wishlist");
+  res.json(user.wishlist);
+});
+
+// Add to wishlist
+router.post("/wishlist", authenticate, async (req, res) => {
+  const { productId } = req.body;
+  const user = await User.findById(req.user.id);
+
+  if (!user.wishlist.includes(productId)) {
+    user.wishlist.push(productId);
+    await user.save();
+  }
+
+  res.json(user.wishlist);
+});
+
+// Remove from wishlist
+router.delete("/wishlist/:productId", authenticate, async (req, res) => {
+  const { productId } = req.params;
+  const user = await User.findById(req.user.id);
+
+  user.wishlist = user.wishlist.filter((id) => id.toString() !== productId);
+  await user.save();
+
+  res.json(user.wishlist);
+});
 
 // Get user profile
 router.get("/profile", authenticate, async (req, res) => {

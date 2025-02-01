@@ -1,6 +1,7 @@
 const express = require("express");
 const Order = require("../models/Order");
-const authenticate = require("../middleware/authMiddleware");
+
+const { authenticate, isAdmin } = require("../middleware/authMiddleware"); // Correct import
 
 const router = express.Router();
 

@@ -13,6 +13,7 @@ import Orders from "./pages/Orders";
 import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import { useAuth } from "./context/AuthContext";
+import Wishlist from "./pages/Wishlist";
 
 
 
@@ -40,6 +41,7 @@ function App() {
           <Route path="/orders" element={<Orders />} />;
           <Route path="/admin" element={user && user.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />;
           <Route path="/profile" element={<Profile />} />;
+          <Route path="/wishlist" element={<Wishlist/>} />;
         </Routes>
         {/* Add Footer here */}
       </div>

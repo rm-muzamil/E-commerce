@@ -1,3 +1,8 @@
+const express = require("express"); // ✅ Import Express
+const router = express.Router(); // ✅ Define Router
+const { authenticate, isAdmin } = require("../middleware/authMiddleware"); // Import authentication middleware
+
+
 const Product = require("../models/Product");
 
 // Add Product
@@ -10,6 +15,8 @@ router.post("/products", authenticate, isAdmin, async (req, res) => {
     res.status(500).json({ error: "Failed to add product" });
   }
 });
+
+
 
 // Edit Product
 router.put("/products/:id", authenticate, isAdmin, async (req, res) => {
@@ -30,3 +37,5 @@ router.delete("/products/:id", authenticate, isAdmin, async (req, res) => {
     res.status(500).json({ error: "Failed to delete product" });
   }
 });
+
+module.exports = router; // ✅ Export router

@@ -34,6 +34,11 @@
 
 
 const Order = require("../models/Order");
+const express = require("express"); // ✅ Import Express
+const router = express.Router();
+
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Make sure the secret key is set
 
 router.post("/create-checkout-session", async (req, res) => {
   const { cart, userId } = req.body;
@@ -57,3 +62,5 @@ router.post("/create-checkout-session", async (req, res) => {
 
   res.json({ url: session.url });
 });
+
+module.exports = router;

@@ -30,6 +30,7 @@ const Navbar = () => {
         )}
         {user && user.role === "admin" && <Link to="/admin" className="mr-4">Admin</Link>}
         {user && <Link to="/profile" className="mr-4">Profile</Link>}
+        {user && <Link to="/wishlist" className="mr-4">Wishlist</Link>}
 
 
       </div>
