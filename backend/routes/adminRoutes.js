@@ -1,9 +1,25 @@
 const express = require("express"); // ✅ Import Express
-const router = express.Router(); // ✅ Define Router
 const { authenticate, isAdmin } = require("../middleware/authMiddleware"); // Import authentication middleware
-
-
 const Product = require("../models/Product");
+const Order = require("../models/Order");
+const User = require("../models/Usere");
+
+const router = express.Router(); // ✅ Define Router
+
+
+router.get("/stats", async (req, res) => {
+  const users = await User.countDocuments();
+  const products = await Product.countDocuments();
+  const orders = await Order.countDocuments();
+  const sales = await Order.aggregate([{ $group: { _id: null, total: { $sum: "$totalPrice" } } }]);
+
+  res.json({
+    users,
+    products,
+    orders,
+    sales: sales.length ? sales[0].total : 0,
+  });
+});
 
 // Add Product
 router.post("/products", authenticate, isAdmin, async (req, res) => {

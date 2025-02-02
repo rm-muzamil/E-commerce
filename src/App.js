@@ -14,6 +14,12 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import { useAuth } from "./context/AuthContext";
 import Wishlist from "./pages/Wishlist";
+import OrderSuccess from "./pages/OrderSuccess";
+import Dashboard from "./pages/admin/Dashboard";
+
+
+
+
 
 
 
@@ -22,7 +28,7 @@ import Wishlist from "./pages/Wishlist";
 
 
 function App() {
-  const { user} = useAuth();
+  const { user } = useAuth();
   return (
 
     <Router>
@@ -38,10 +44,12 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/success" element={<Success />} />;
-          <Route path="/orders" element={<Orders />} />;
-          <Route path="/admin" element={user && user.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />;
+          {/* <Route path="/admin" element={user && user.role === "admin" ? <AdminDashboard /> : <Navigate to="/" />} />; */}
           <Route path="/profile" element={<Profile />} />;
-          <Route path="/wishlist" element={<Wishlist/>} />;
+          <Route path="/wishlist" element={<Wishlist />} />;
+          <Route path="/order-success" element={<OrderSuccess />} />;
+          <Route path="/admin" element={<Dashboard />} />;
+          <Route path="/admin/orders" element={<Orders />} />;
         </Routes>
         {/* Add Footer here */}
       </div>

@@ -1,14 +1,22 @@
 import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Checkout = () => {
   const { cart } = useCart();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ name: "", address: "", email: "" });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handlePayment = async () => {
+    setLoading(true);
+    const { data } = await axios.post("http://localhost:5000/api/payment/create-checkout-session", { cart });
+    window.location.href = data.url;
   };
 
   const handleSubmit = (e) => {
@@ -77,6 +85,9 @@ const Checkout = () => {
               Place Order
             </button>
           </form>
+          <button onClick={handlePayment} className="bg-green-500 text-white px-4 py-2 rounded mt-4">
+            {loading ? "Processing..." : "Proceed to Payment"}
+          </button>
         </div>
       </div>
     </div>

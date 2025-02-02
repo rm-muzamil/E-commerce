@@ -1,51 +1,54 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "../context/AuthContext";
+import { Bar } from "react-chartjs-2";
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      const { data } = await axios.get("http://localhost:5000/api/admin/orders", {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      setOrders(data);
-    };
-    fetchOrders();
+    axios.get("http://localhost:5000/api/admin/orders").then((res) => setOrders(res.data));
+    axios.get("http://localhost:5000/api/admin/users").then((res) => setUsers(res.data));
+    axios.get("http://localhost:5000/api/admin/products").then((res) => setProducts(res.data));
   }, []);
-
-  const updateOrderStatus = async (orderId, status) => {
-    await axios.put(`http://localhost:5000/api/admin/orders/${orderId}`, { status }, {
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
-    setOrders(orders.map((order) => (order._id === orderId ? { ...order, orderStatus: status } : order)));
-  };
 
   return (
     <div className="container mx-auto p-8">
       <h2 className="text-2xl font-bold mb-4">Admin Dashboard</h2>
-      {orders.length === 0 ? <p>No orders yet.</p> : (
-        <ul>
-          {orders.map((order) => (
-            <li key={order._id} className="border p-4 rounded-lg mb-4">
-              <h3 className="text-lg font-semibold">Order ID: {order._id}</h3>
-              <p>User: {order.userId.name} ({order.userId.email})</p>
-              <p>Status: {order.orderStatus}</p>
-              <select
-                value={order.orderStatus}
-                onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                className="border p-2 rounded"
-              >
-                <option value="Processing">Processing</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-              </select>
-            </li>
-          ))}
-        </ul>
-      )}
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="p-4 bg-blue-500 text-white rounded-lg">
+          <h3 className="text-lg font-bold">Total Orders</h3>
+          <p>{orders.length}</p>
+        </div>
+
+        <div className="p-4 bg-green-500 text-white rounded-lg">
+          <h3 className="text-lg font-bold">Total Users</h3>
+          <p>{users.length}</p>
+        </div>
+
+        <div className="p-4 bg-purple-500 text-white rounded-lg">
+          <h3 className="text-lg font-bold">Total Products</h3>
+          <p>{products.length}</p>
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <h3 className="text-xl font-bold">Sales Analytics</h3>
+        <Bar
+          data={{
+            labels: ["January", "February", "March", "April", "May"],
+            datasets: [
+              {
+                label: "Sales",
+                data: [5000, 7000, 4000, 8000, 9000],
+                backgroundColor: "rgba(54, 162, 235, 0.6)",
+              },
+            ],
+          }}
+        />
+      </div>
     </div>
   );
 };

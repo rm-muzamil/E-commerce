@@ -38,7 +38,32 @@ const express = require("express"); // ✅ Import Express
 const router = express.Router();
 
 
+const { authenticate } = require("../middleware/authMiddleware");
+
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Make sure the secret key is set
+
+router.post("/create-checkout-session", authenticate, async (req, res) => {
+  const { cart } = req.body;
+
+  const line_items = cart.map((item) => ({
+    price_data: {
+      currency: "usd",
+      product_data: {
+        name: item.product.name,
+        images: [item.product.image],
+      },
+      unit_amount: item.product.price * 100,
+    },
+    quantity: item.quantity,
+  }));  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items,
+    mode: "payment",
+    success_url: "http://localhost:3000/order-success",
+    cancel_url: "http://localhost:3000/cart",
+  });
+
+  res.json({ url: session.url });});
 
 router.post("/create-checkout-session", async (req, res) => {
   const { cart, userId } = req.body;

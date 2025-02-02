@@ -1,6 +1,7 @@
 const express = require("express");
 const Order = require("../models/Order");
 
+
 const { authenticate, isAdmin } = require("../middleware/authMiddleware"); // Correct import
 
 const router = express.Router();
@@ -23,15 +24,22 @@ router.post("/", authenticate, async (req, res) => {
     res.status(500).json({ error: "Failed to create order" });
   }
 });
+router.get("/", async (req, res) => {
+  const orders = await Order.find();
+  res.json(orders);
+});
 
-// Get User Orders
-router.get("/", authenticate, async (req, res) => {
-  try {
-    const orders = await Order.find({ userId: req.user.id });
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch orders" });
-  }
+// Update order status
+router.put("/:id", async (req, res) => {
+  const { status } = req.body;
+  const updatedOrder = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
+  res.json(updatedOrder);
+});
+
+// Delete an order
+router.delete("/:id", async (req, res) => {
+  await Order.findByIdAndDelete(req.params.id);
+  res.json({ message: "Order deleted successfully" });
 });
 
 module.exports = router;

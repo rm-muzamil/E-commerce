@@ -26,6 +26,7 @@ const Navbar = () => {
             <Link to="/login" className="mr-4">Login</Link>
             <Link to="/signup" className="bg-blue-600 px-4 py-2 rounded">Sign Up</Link>
             <Link to="/orders" className="mr-4">Orders</Link>
+            <Link to="/admin" className="mr-4">Or</Link>
           </>
         )}
         {user && user.role === "admin" && <Link to="/admin" className="mr-4">Admin</Link>}

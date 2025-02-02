@@ -21,6 +21,8 @@ const Stripe = require("stripe");
 const app = express();
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
+
+
 app.use(express.json());
 app.use(cors());
 app.use("/api/auth", authRoutes);
