@@ -23,14 +23,15 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 
 
+
 app.use(express.json());
 app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes)
-app.use("/api/payment", paymentRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use(cors()); // Enable CORS
 
 

@@ -34,58 +34,40 @@
 
 
 const Order = require("../models/Order");
-const express = require("express"); // ✅ Import Express
+const express = require("express");
+const Stripe = require("stripe");
+require("dotenv").config();
 const router = express.Router();
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 
 const { authenticate } = require("../middleware/authMiddleware");
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Make sure the secret key is set
-
-router.post("/create-checkout-session", authenticate, async (req, res) => {
-  const { cart } = req.body;
-
-  const line_items = cart.map((item) => ({
-    price_data: {
-      currency: "usd",
-      product_data: {
-        name: item.product.name,
-        images: [item.product.image],
-      },
-      unit_amount: item.product.price * 100,
-    },
-    quantity: item.quantity,
-  }));  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
-    line_items,
-    mode: "payment",
-    success_url: "http://localhost:3000/order-success",
-    cancel_url: "http://localhost:3000/cart",
-  });
-
-  res.json({ url: session.url });});
 
 router.post("/create-checkout-session", async (req, res) => {
-  const { cart, userId } = req.body;
-  
-  const totalAmount = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const { products } = req.body;
+
+  const lineItems = products.map((product) => ({
+    price_data: {
+      currency: "usd",
+      product_data: { name: product.name },
+      unit_amount: product.price * 100,
+    },
+    quantity: product.quantity,
+  }));
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
-    line_items: cart.map((item) => ({
-      price_data: {
-        currency: "usd",
-        product_data: { name: item.name },
-        unit_amount: item.price * 100,
-      },
-      quantity: item.quantity,
-    })),
+    line_items: lineItems,
     mode: "payment",
-    success_url: `http://localhost:3000/success?userId=${userId}&total=${totalAmount}`,
-    cancel_url: "http://localhost:3000/cart",
+    success_url: "http://localhost:3000/payment-success",
+    cancel_url: "http://localhost:3000/payment-cancel",
   });
 
-  res.json({ url: session.url });
+  res.json({ id: session.id });
 });
+
+
+
 
 module.exports = router;

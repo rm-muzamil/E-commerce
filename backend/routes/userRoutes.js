@@ -5,6 +5,42 @@ const { authenticate } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+const { protect, adminOnly } = require("../middleware/authMiddleware");
+
+router.get("/", protect, adminOnly, async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+});
+
+router.put("/:id", protect, adminOnly, async (req, res) => {
+  const { role } = req.body;
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, { role }, { new: true });
+  res.json(updatedUser);
+});
+
+router.delete("/:id", protect, adminOnly, async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.json({ message: "User deleted successfully" });
+});
+
+router.get("/", async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+});
+
+// Update user role
+router.put("/:id", async (req, res) => {
+  const { role } = req.body;
+  const updatedUser = await User.findByIdAndUpdate(req.params.id, { role }, { new: true });
+  res.json(updatedUser);
+});
+
+// Delete a user
+router.delete("/:id", async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.json({ message: "User deleted successfully" });
+});
+
 // Get wishlist
 router.get("/wishlist", authenticate, async (req, res) => {
   const user = await User.findById(req.user.id).populate("wishlist");

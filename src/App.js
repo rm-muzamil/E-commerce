@@ -16,6 +16,8 @@ import { useAuth } from "./context/AuthContext";
 import Wishlist from "./pages/Wishlist";
 import OrderSuccess from "./pages/OrderSuccess";
 import Dashboard from "./pages/admin/Dashboard";
+import Users from "./pages/admin/Users";
+
 
 
 
@@ -50,6 +52,7 @@ function App() {
           <Route path="/order-success" element={<OrderSuccess />} />;
           <Route path="/admin" element={<Dashboard />} />;
           <Route path="/admin/orders" element={<Orders />} />;
+          <Route path="/admin/users" element={<Users />} />;
         </Routes>
         {/* Add Footer here */}
       </div>
