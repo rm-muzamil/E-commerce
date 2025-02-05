@@ -41,9 +41,13 @@ const CheckoutForm = () => {
         products: JSON.parse(localStorage.getItem("cart")),
       });
   
-      window.location.href = data.id;
+      // Load Stripe and redirect to checkout
+      const stripe = await loadStripe("pk_test_51QnNKqR7856O1MMucOO5LQYVzW69j960sQ08BFQJYBKSrqLvMoEa0RNdnIw7g49GvaSaUY0gzXSDRqpQayDbbD700017eiHUWg");
+      await stripe.redirectToCheckout({ sessionId: data.id });
+  
     } catch (error) {
       console.error("Payment error:", error.response ? error.response.data : error.message);
+      alert("Payment request failed! Check console for details.");
     }
   };
 
