@@ -55,7 +55,7 @@ import React from "react";
 import axios from "axios";
 
 const Cart = () => {
-  const { cart, removeFromCart, clearCart } = useCart();
+  const { cart, removeFromCart, decreaseQuantity, clearCart } = useCart();
 
   const handleCheckout = async () => {
     const { data } = await axios.post("http://localhost:5000/api/payment/create-checkout-session", { cart });
@@ -84,6 +84,7 @@ const Cart = () => {
                   <h3 className="text-lg">{item.name}</h3>
                   <p>${item.price} x {item.quantity}</p>
                 </div>
+                <button onClick={() => decreaseQuantity(item._id)}>Decrease</button>
                 <button
                   onClick={() => removeFromCart(item._id)}
                   className="bg-red-500 text-white px-4 py-2 rounded"
